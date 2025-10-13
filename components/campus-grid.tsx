@@ -22,14 +22,14 @@ const CARDS: Card[] = [
 
 export default function CampusGrid() {
   return (
-    <section aria-label="Glimpses of Campus Life" className="py-12 sm:py-16 md:py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimateOnScroll className="text-center mb-8 md:mb-10">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900">Glimpses of Campus Life</h3>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-2">Energetic, creative, and collaborative moments</p>
+    <section aria-label="Glimpses of Campus Life" className="py-16 md:py-20 bg-white">
+      <div className="container mx-auto px-4">
+        <AnimateOnScroll className="text-center mb-10">
+          <h3 className="text-3xl md:text-4xl font-extrabold text-gray-900">Glimpses of Campus Life</h3>
+          <p className="text-gray-600 mt-2">Energetic, creative, and collaborative moments</p>
         </AnimateOnScroll>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 md:gap-7">
+        <div className="grid md:grid-cols-3 gap-7">
           {CARDS.map((c, i) => (
             <AnimateOnScroll key={c.title} variant="fade-up" delayMs={120 * i}>
               <CampusCard {...c} />
@@ -93,8 +93,8 @@ function CampusCard({ src, title, tag, color }: Card) {
               </div>
             )}
           </div>
-          <div className="p-4 sm:p-5">
-            <h4 className="text-base sm:text-lg font-semibold text-gray-900">{title}</h4>
+          <div className="p-5">
+            <h4 className="text-lg font-semibold text-gray-900">{title}</h4>
           </div>
         </div>
       </div>

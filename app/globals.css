@@ -471,6 +471,33 @@
   .animate-icon-wiggle {
     animation: iconWiggle 2.4s ease-in-out infinite;
   }
+
+  /* Floating bubble animation */
+  @keyframes floatBubble {
+    0% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translateY(-30px) translateX(10px) scale(1.1);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translateY(-60px) translateX(-10px) scale(0.9);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translateY(-30px) translateX(15px) scale(1.05);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 0.3;
+    }
+  }
+  .animate-float-bubble {
+    animation: floatBubble 12s ease-in-out infinite;
+  }
 }
 
 /* Glassmorphism utilities */

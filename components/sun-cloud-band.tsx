@@ -8,20 +8,20 @@ export default function SunCloudBand() {
   return (
     <section ref={ref} aria-label="Sun and clouds intro" className="relative overflow-hidden">
       {/* Solid sky */}
-      <div className="h-28 md:h-32 bg-[#EAF4FF]" />
+      <div className="h-24 sm:h-28 md:h-32 bg-[#EAF4FF]" />
       {/* Sun */}
       <div
         aria-hidden
-        className="absolute left-8 md:left-16 -top-8 w-20 h-20 md:w-24 md:h-24 rounded-full bg-yellow-300 shadow-[0_0_80px_rgba(250,204,21,0.45)] animate-sun-glow"
+        className="absolute left-4 sm:left-8 md:left-16 -top-6 sm:-top-8 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-yellow-300 shadow-[0_0_60px_rgba(250,204,21,0.40)] sm:shadow-[0_0_80px_rgba(250,204,21,0.45)] animate-sun-glow"
       />
       {/* Clouds */}
-      <Cloud className="absolute top-6 left-10 animate-cloud-fast" />
-      <Cloud className="absolute top-4 right-12 scale-90 animate-cloud-med" />
-      <Cloud className="absolute top-10 left-1/2 -translate-x-1/2 scale-75 animate-cloud-slow" />
+      <Cloud className="absolute top-6 left-6 sm:left-10 scale-75 sm:scale-100 animate-cloud-fast" />
+      <Cloud className="absolute top-4 right-6 sm:right-12 scale-[0.65] sm:scale-90 animate-cloud-med" />
+      <Cloud className="hidden sm:block absolute top-10 left-1/2 -translate-x-1/2 scale-75 animate-cloud-slow" />
 
       {/* Glass bar */}
-      <div className="absolute inset-0 flex items-end justify-center pointer-events-none">
-        <div className="glass pointer-events-auto rounded-2xl border-white/50 shadow-lg px-5 py-2.5 mb-3 text-sm font-semibold text-blue-900">
+      <div className="absolute inset-0 flex items-end justify-center pointer-events-none px-4">
+        <div className="glass pointer-events-auto rounded-2xl border-white/50 shadow-lg px-3 sm:px-5 py-2 sm:py-2.5 mb-2 sm:mb-3 text-xs sm:text-sm font-semibold text-blue-900">
           A warm welcome to Holy Family
         </div>
       </div>

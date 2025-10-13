@@ -43,12 +43,12 @@ export default function SkyScene() {
     >
       {/* Solid sky background */}
       <div className="relative w-full">
-        <div className="h-56 md:h-72 lg:h-80 bg-[#EAF4FF]" />
+        <div className="h-48 sm:h-56 md:h-72 lg:h-80 bg-[#EAF4FF]" />
 
         {/* Solid sun */}
         <div
           aria-hidden
-          className="absolute left-6 md:left-16 -top-8 md:-top-10 w-28 h-28 md:w-40 md:h-40 rounded-full bg-yellow-300 shadow-[0_0_80px_rgba(250,204,21,0.45)] animate-sun-glow"
+          className="absolute left-4 sm:left-6 md:left-16 -top-6 sm:-top-8 md:-top-10 w-20 h-20 sm:w-28 sm:h-28 md:w-40 md:h-40 rounded-full bg-yellow-300 shadow-[0_0_60px_rgba(250,204,21,0.40)] sm:shadow-[0_0_80px_rgba(250,204,21,0.45)] animate-sun-glow"
         />
 
         {/* Animated stars (solid subtle dots drifting diagonally) */}
@@ -65,8 +65,8 @@ export default function SkyScene() {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 relative z-10 -mt-12 md:-mt-16">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 -mt-8 sm:-mt-12 md:-mt-16">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
           {/* Left: animated media frame (keeps your image) */}
           <AnimateOnScroll variant="fade-in">
             <div
@@ -90,7 +90,7 @@ export default function SkyScene() {
 
           {/* Right: glass content (solid colors, cleaner label) */}
           <AnimateOnScroll variant="fade-in">
-            <div className="glass rounded-3xl p-7 md:p-10 border-white/50 shadow-xl relative overflow-hidden">
+            <div className="glass rounded-3xl p-5 sm:p-7 md:p-10 border-white/50 shadow-xl relative overflow-hidden">
               {/* Decorative floating blocks (solid) */}
               <div
                 className="absolute -right-6 -top-6 w-10 h-10 bg-blue-200/80 rounded-md animate-float-slow"
@@ -101,32 +101,32 @@ export default function SkyScene() {
                 data-depth="0.08"
               />
 
-              <div className="flex flex-col gap-3 text-center lg:text-left">
-                <div className="inline-flex items-center mx-auto lg:mx-0 gap-2 bg-white/60 backdrop-blur-md rounded-full px-4 py-1.5 border border-white/60 shadow-sm">
-                  <span className="text-xs font-semibold tracking-wide text-blue-900 uppercase">
+              <div className="flex flex-col gap-2 sm:gap-3 text-center lg:text-left">
+                <div className="inline-flex items-center mx-auto lg:mx-0 gap-2 bg-white/60 backdrop-blur-md rounded-full px-3 sm:px-4 py-1 sm:py-1.5 border border-white/60 shadow-sm">
+                  <span className="text-[10px] sm:text-xs font-semibold tracking-wide text-blue-900 uppercase">
                     Where Knowledge Meets Character
                   </span>
                 </div>
 
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-blue-900 animate-heading-reveal">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight text-blue-900 animate-heading-reveal">
                   A joyful place to learn, grow, and shine
                 </h2>
 
-                <p className="max-w-3xl text-gray-700 leading-relaxed mx-auto lg:mx-0 animate-content-rise">
+                <p className="max-w-3xl text-sm sm:text-base text-gray-700 leading-relaxed mx-auto lg:mx-0 animate-content-rise">
                   A warm and welcoming environment designed for curious minds. We balance energetic, creative learning
                   for students with a professional, trustworthy experience for parents and educators.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-3 pt-2 justify-center lg:justify-start">
-                  <Link href="/about" className="group">
-                    <Button className="relative bg-blue-700 hover:bg-blue-800 transition-transform duration-300 hover:-translate-y-0.5">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 justify-center lg:justify-start">
+                  <Link href="/about" className="group w-full sm:w-auto">
+                    <Button className="relative w-full sm:w-auto bg-blue-700 hover:bg-blue-800 transition-transform duration-300 hover:-translate-y-0.5 text-sm sm:text-base">
                       <span className="relative z-10">Explore Our Mission</span>
                     </Button>
                   </Link>
-                  <Link href="/gallery" className="group">
+                  <Link href="/gallery" className="group w-full sm:w-auto">
                     <Button
                       variant="outline"
-                      className="relative bg-white hover:bg-white border-gray-300 text-gray-900 transition-transform duration-300 hover:-translate-y-0.5"
+                      className="relative w-full sm:w-auto bg-white hover:bg-white border-gray-300 text-gray-900 transition-transform duration-300 hover:-translate-y-0.5 text-sm sm:text-base"
                     >
                       <span className="relative z-10">See Campus Life</span>
                     </Button>

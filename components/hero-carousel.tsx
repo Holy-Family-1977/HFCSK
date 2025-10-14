@@ -1,32 +1,32 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import Image from 'next/image'
+import { useState, useEffect } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 const slides = [
   {
-    image: '/achievement-banner.png',
-    caption: 'Congratulations on Your Remarkable Journey!',
-    description: 'Celebrating our AISSCE 2024-25 Toppers',
-    isAchievement: true
+    image: "/achievement-banner.png",
+    caption: "Congratulations on Your Remarkable Journey!",
+    description: "Celebrating our AISSCE 2024-25 Toppers",
+    isAchievement: true,
   },
   {
-    image: '/classroom-learning.png',
-    caption: 'Empowering Future Leaders',
-    description: 'Nurturing young minds to become tomorrow\'s leaders'
+    image: "/classroom-learning.png",
+    caption: "Empowering Future Leaders",
+    description: "Nurturing young minds to become tomorrow's leaders",
   },
   {
-    image: '/school-campus.png',
-    caption: 'A Legacy of Excellence in Education',
-    description: 'Continuing our tradition of academic excellence since 1990'
+    image: "/school-campus.png",
+    caption: "A Legacy of Excellence in Education",
+    description: "Continuing our tradition of academic excellence since 1990",
   },
   {
-    image: '/school-activities.png',
-    caption: 'Where Knowledge Meets Character',
-    description: 'Building character alongside academic achievement'
-  }
+    image: "/school-activities.png",
+    caption: "Where Knowledge Meets Character",
+    description: "Building character alongside academic achievement",
+  },
 ]
 
 export default function HeroCarousel() {
@@ -49,13 +49,13 @@ export default function HeroCarousel() {
   }
 
   return (
-    <div className="relative h-[80vh] overflow-hidden">
+    <div className="hero-full relative h-[100svh] min-h-[560px] overflow-hidden">
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
           key={index}
           className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0'
+            index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
           {slide.isAchievement ? (
@@ -70,31 +70,37 @@ export default function HeroCarousel() {
               />
               <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center text-white">
                 <p className="text-xl md:text-2xl font-medium italic max-w-4xl">
-                  "May the Lord continue to guide your steps and bless you with wisdom, strength, and grace in all that you pursue."
+                  "May the Lord continue to guide your steps and bless you with wisdom, strength, and grace in all that
+                  you pursue."
                 </p>
               </div>
             </div>
           ) : (
             // Regular Slides
             <>
-              <Image
-                src={slide.image || "/placeholder.svg"}
-                alt={slide.caption}
-                fill
-                className="object-cover"
-                priority={index === 0}
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40" />
-              
-              {/* Caption */}
+              {slide.video ? (
+                <video
+                  src={slide.video}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={slide.image || "/placeholder.svg"}
+                  alt={slide.caption}
+                  fill
+                  className="object-cover"
+                  priority={index === 0}
+                />
+              )}
+              <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center text-white px-4 animate-fade-in">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
-                    {slide.caption}
-                  </h1>
-                  <p className="text-xl md:text-2xl max-w-2xl mx-auto drop-shadow-md">
-                    {slide.description}
-                  </p>
+                  <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">{slide.caption}</h1>
+                  <p className="text-xl md:text-2xl max-w-2xl mx-auto drop-shadow-md">{slide.description}</p>
                 </div>
               </div>
             </>
@@ -111,7 +117,7 @@ export default function HeroCarousel() {
       >
         <ChevronLeft className="h-8 w-8" />
       </Button>
-      
+
       <Button
         variant="ghost"
         size="icon"
@@ -127,7 +133,7 @@ export default function HeroCarousel() {
           <button
             key={index}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
+              index === currentSlide ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
             }`}
             onClick={() => setCurrentSlide(index)}
           />

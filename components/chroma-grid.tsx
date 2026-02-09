@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { gsap } from "gsap"
+import ImageLightbox from "./image-lightbox"
 
 type GridItem = {
   image: string
@@ -40,6 +41,8 @@ export default function ChromaGrid({
   const setX = useRef<((v: number) => void) | null>(null)
   const setY = useRef<((v: number) => void) | null>(null)
   const pos = useRef({ x: 0, y: 0 })
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<{ src: string; title: string } | null>(null)
 
   useEffect(() => {
     const el = rootRef.current
@@ -81,8 +84,9 @@ export default function ChromaGrid({
     })
   }
 
-  const handleCardClick = (url?: string) => {
-    if (url) window.open(url, "_blank", "noopener,noreferrer")
+  const handleCardClick = (item: GridItem) => {
+    setSelectedImage({ src: item.image, title: item.title })
+    setLightboxOpen(true)
   }
 
   const handleCardMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -113,12 +117,12 @@ export default function ChromaGrid({
           key={i}
           className="chroma-card"
           onMouseMove={handleCardMove}
-          onClick={() => handleCardClick(c.url)}
+          onClick={() => handleCardClick(c)}
           style={
             {
               ["--card-border" as any]: c.borderColor || "transparent",
               ["--card-gradient" as any]: c.gradient || "linear-gradient(145deg, #2563EB, #0B1220)",
-              cursor: c.url ? "pointer" : "default",
+              cursor: "pointer",
             } as React.CSSProperties
           }
         >
@@ -135,6 +139,13 @@ export default function ChromaGrid({
       ))}
       <div className="chroma-overlay" />
       <div ref={fadeRef} className="chroma-fade" />
+
+      <ImageLightbox
+        isOpen={lightboxOpen}
+        image={selectedImage?.src || ""}
+        title={selectedImage?.title || ""}
+        onClose={() => setLightboxOpen(false)}
+      />
 
       <style jsx global>{`
         .chroma-grid {

@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 import Image from 'next/image';
 
 interface PopupData {
-  id: number;
+  id: string;
   title: string;
   description: string | null;
   image_url: string | null;
@@ -15,37 +15,44 @@ interface PopupData {
 export default function PopupModal() {
   const [popup, setPopup] = useState<PopupData | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPopup = async () => {
       try {
+        console.log('[v0] Fetching popup announcement...');
         const response = await fetch('/api/announcements');
-        if (response.ok) {
-          const data: PopupData = await response.json();
-          if (data && data.is_enabled) {
-            setPopup(data);
-            // Check if user has dismissed this popup in this session
-            const dismissedId = sessionStorage.getItem('dismissedPopup');
-            if (dismissedId !== String(data.id)) {
+        const responseText = await response.text();
+        console.log('[v0] Response status:', response.status);
+        console.log('[v0] Response text:', responseText);
+
+        if (response.ok && responseText) {
+          try {
+            const data = JSON.parse(responseText) as PopupData;
+            console.log('[v0] Parsed popup data:', data);
+            if (data && data.is_enabled) {
+              setPopup(data);
               setIsOpen(true);
             }
+          } catch (parseError) {
+            console.error('[v0] JSON parse error:', parseError);
           }
+        } else {
+          console.log('[v0] API returned no data or error');
         }
       } catch (error) {
         console.error('[v0] Failed to fetch popup:', error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
-    fetchPopup();
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      fetchPopup();
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
-    if (popup) {
-      sessionStorage.setItem('dismissedPopup', String(popup.id));
-    }
     setIsOpen(false);
   };
 
@@ -54,7 +61,7 @@ export default function PopupModal() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="relative w-full max-w-2xl mx-4 overflow-hidden rounded-2xl bg-white shadow-2xl animate-fade-in-scale">
         {/* Close Button */}
         <button
@@ -85,7 +92,7 @@ export default function PopupModal() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
               {popup.title}
             </h2>
-            
+
             {popup.description && (
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
                 {popup.description}

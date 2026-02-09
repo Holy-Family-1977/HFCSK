@@ -21,23 +21,21 @@ export default function PopupModal() {
       try {
         console.log('[v0] Fetching popup announcement...');
         const response = await fetch('/api/announcements');
-        const responseText = await response.text();
-        console.log('[v0] Response status:', response.status);
-        console.log('[v0] Response text:', responseText);
 
-        if (response.ok && responseText) {
-          try {
-            const data = JSON.parse(responseText) as PopupData;
-            console.log('[v0] Parsed popup data:', data);
-            if (data && data.is_enabled) {
-              setPopup(data);
-              setIsOpen(true);
-            }
-          } catch (parseError) {
-            console.error('[v0] JSON parse error:', parseError);
-          }
+        if (!response.ok) {
+          console.log('[v0] API error response:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        console.log('[v0] Fetched data:', data);
+
+        if (data && typeof data === 'object' && 'id' in data && data.is_enabled) {
+          console.log('[v0] Setting popup to display');
+          setPopup(data as PopupData);
+          setIsOpen(true);
         } else {
-          console.log('[v0] API returned no data or error');
+          console.log('[v0] No valid announcement data found');
         }
       } catch (error) {
         console.error('[v0] Failed to fetch popup:', error);

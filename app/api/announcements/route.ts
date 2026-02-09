@@ -19,26 +19,27 @@ export async function GET() {
       .single();
 
     if (error) {
-      console.error('[v0] Supabase error:', error.message);
+      console.error('[v0] Supabase error code:', error.code);
+      console.error('[v0] Supabase error message:', String(error.message));
       // Return empty response if table doesn't exist or no data found
       if (error.code === 'PGRST116' || error.code === '42P01') {
-        console.log('[v0] Announcements table not found, returning null');
-        return NextResponse.json(null, { status: 200 });
+        console.log('[v0] Announcements table not found, returning empty');
+        return NextResponse.json({}, { status: 200 });
       }
-      return NextResponse.json(null, { status: 200 });
+      return NextResponse.json({}, { status: 200 });
     }
 
     if (!data) {
       console.log('[v0] No enabled announcements found');
-      return NextResponse.json(null, { status: 200 });
+      return NextResponse.json({}, { status: 200 });
     }
 
-    console.log('[v0] Returning announcement:', data);
+    console.log('[v0] Returning announcement data');
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error('[v0] API error:', error);
-    // Return null instead of error to allow graceful degradation
-    return NextResponse.json(null, { status: 200 });
+    console.error('[v0] API error:', String(error));
+    // Return empty object instead of null to ensure valid JSON
+    return NextResponse.json({}, { status: 200 });
   }
 }
 

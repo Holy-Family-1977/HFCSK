@@ -4,7 +4,8 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
-import PreviewFit from "@/components/preview-fit" // Added import
+import PreviewFit from "@/components/preview-fit"
+import PopupModal from "@/components/popup-modal"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <PopupModal />
         <PreviewFit />
         <Navbar />
         <main>{children}</main>

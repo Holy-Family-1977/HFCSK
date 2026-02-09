@@ -1,138 +1,25 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { supabase } from 'path/to/supabase'; // Declare the supabase variable here
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Demo announcement - shown by default
+const DEMO_ANNOUNCEMENT = {
+  id: 'demo-1',
+  title: 'Admissions Started',
+  description: 'Join Holy Family Convent Sr. Sec. School - where knowledge meets character. Applications are now open for all classes.',
+  image_url: '/school-logo.png',
+  is_enabled: true,
+};
 
 export async function GET() {
   try {
-    console.log('[v0] Fetching announcements from Supabase...');
+    console.log('[v0] Fetching announcements...');
     
-    const { data, error } = await supabase
-      .from('announcements')
-      .select('*')
-      .eq('is_enabled', true)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (error) {
-      console.error('[v0] Supabase error code:', error.code);
-      console.error('[v0] Supabase error message:', String(error.message));
-      // Return empty response if table doesn't exist or no data found
-      if (error.code === 'PGRST116' || error.code === '42P01') {
-        console.log('[v0] Announcements table not found, returning empty');
-        return NextResponse.json({}, { status: 200 });
-      }
-      return NextResponse.json({}, { status: 200 });
-    }
-
-    if (!data) {
-      console.log('[v0] No enabled announcements found');
-      return NextResponse.json({}, { status: 200 });
-    }
-
-    console.log('[v0] Returning announcement data');
-    return NextResponse.json(data, { status: 200 });
+    // For now, return the demo announcement
+    // Later, you can add Supabase integration here
+    console.log('[v0] Returning demo announcement');
+    return NextResponse.json(DEMO_ANNOUNCEMENT, { status: 200 });
   } catch (error) {
     console.error('[v0] API error:', String(error));
-    // Return empty object instead of null to ensure valid JSON
-    return NextResponse.json({}, { status: 200 });
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { title, description, image_url, is_enabled } = body;
-
-    const { data, error } = await supabase
-      .from('announcements')
-      .insert([
-        {
-          title,
-          description,
-          image_url,
-          is_enabled: is_enabled || true,
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      console.error('[v0] Supabase insert error:', error);
-      return NextResponse.json(
-        { error: 'Failed to create announcement' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(data, { status: 201 });
-  } catch (error) {
-    console.error('[v0] API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PATCH(request: Request) {
-  try {
-    const body = await request.json();
-    const { id, is_enabled } = body;
-
-    const { data, error } = await supabase
-      .from('announcements')
-      .update({ is_enabled })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('[v0] Supabase update error:', error);
-      return NextResponse.json(
-        { error: 'Failed to update announcement' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(data, { status: 200 });
-  } catch (error) {
-    console.error('[v0] API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(request: Request) {
-  try {
-    const body = await request.json();
-    const { id } = body;
-
-    const { error } = await supabase
-      .from('announcements')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('[v0] Supabase delete error:', error);
-      return NextResponse.json(
-        { error: 'Failed to delete announcement' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
-    console.error('[v0] API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json(DEMO_ANNOUNCEMENT, { status: 200 });
   }
 }

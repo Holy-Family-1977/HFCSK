@@ -53,7 +53,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
                 <Image
-                  src="./MainBensy.JPEG"
+                  src="./MainBensy.jpeg"
                   alt="Principal welcoming students"
                   fill
                   className="object-cover"
@@ -80,7 +80,7 @@ export default function AboutPage() {
             <div className="flex flex-col md:flex-row gap-8 items-start">
               <div className="md:w-1/3">
                 <Image
-                  src="./DeskBensy.JPEG"
+                  src="./DeskBensy.jpeg"
                   alt="Sr. Bensy V K - Principal"
                   width={250}
                   height={300}

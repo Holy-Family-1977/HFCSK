@@ -7,23 +7,23 @@ import Image from "next/image"
 
 const slides = [
   {
-    image: "./DSC_6546.jpg",
+    image: "./DSC_6546.JPG",
     caption: "Congratulations on Your Remarkable Journey!",
     description: "Celebrating our AISSCE 2024-25 Toppers",
     isAchievement: true,
   },
   {
-    image: "./DSC_4868.jpg",
+    image: "./DSC_4868.JPG",
     caption: "Empowering Future Leaders",
     description: "Nurturing young minds to become tomorrow's leaders",
   },
   {
-    image: "./DSC_9492.jpg",
+    image: "./DSC_9492.JPG",
     caption: "A Legacy of Excellence in Education",
     description: "Continuing our tradition of academic excellence since 1990",
   },
   {
-    image: "./DSC_0877.jpg",
+    image: "./DSC_0877.JPG",
     caption: "Where Knowledge Meets Character",
     description: "Building character alongside academic achievement",
   },
@@ -62,7 +62,7 @@ export default function HeroCarousel() {
             // Achievement Banner Slide
             <div className="relative w-full h-full bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900">
               <Image
-                src="./school-activities.jpg"
+                src="./school-activities.JPG"
                 alt="Achievement Banner"
                 fill
                 className="object-cover"

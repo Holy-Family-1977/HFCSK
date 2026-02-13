@@ -14,7 +14,7 @@ export default function CBSCInfoPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12 px-4">
         <div className="container mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-3">CBSC Information</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-3">CBSE Information</h1>
           <p className="text-blue-100 text-lg">Official School Documents & Information</p>
         </div>
       </div>

@@ -23,12 +23,12 @@ export default function AboutPage() {
                     <span className="text-base leading-tight">
                       Since
                       <br />
-                      1990
+                      1977
                     </span>
                   </div>
                 </div>
                 <div className="text-sm font-semibold text-teal-700 uppercase tracking-wider">
-                  Celebrating 35+ Years
+                  Celebrating 50 Years
                 </div>
               </div>
 

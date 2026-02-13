@@ -40,6 +40,9 @@ export default function Navbar() {
             <Link href="/gallery" className="text-gray-700 hover:text-blue-600 transition-all duration-300 hover:scale-110">
               Gallery
             </Link>
+            <Link href="/cbsc-info" className="text-gray-700 hover:text-blue-600 transition-all duration-300 hover:scale-110">
+              CBSC Information
+            </Link>
             <Link href="/tc" className="text-gray-700 hover:text-blue-600 transition-all duration-300 hover:scale-110">
               TC
             </Link>
@@ -69,6 +72,9 @@ export default function Navbar() {
               </Link>
               <Link href="/gallery" className="text-gray-700 hover:text-blue-600 transition-colors hover:translate-x-2 transform duration-300">
                 Gallery
+              </Link>
+              <Link href="/cbsc-info" className="text-gray-700 hover:text-blue-600 transition-colors hover:translate-x-2 transform duration-300">
+                CBSC Information
               </Link>
               <Link href="/tc" className="text-gray-700 hover:text-blue-600 transition-colors hover:translate-x-2 transform duration-300">
                 TC

@@ -18,7 +18,7 @@ const slides = [
     description: "Nurturing young minds to become tomorrow's leaders",
   },
   {
-    image: "./DSC_9492.JPG",
+    image: "./DSC_0877.JPG",
     caption: "A Legacy of Excellence in Education",
     description: "Continuing our tradition of academic excellence since 1990",
   },

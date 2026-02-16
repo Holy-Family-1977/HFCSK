@@ -7,8 +7,16 @@ import SetApartCard from "@/components/set-apart-card"
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero with floating quick actions */}
-      <AboutHero />
+      {/* Header Image */}
+      <div className="relative w-full h-64 md:h-80 overflow-hidden">
+        <Image
+          src="/about-page-header.png"
+          alt="About Us Header"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
 
       {/* Intro: badge + copy + mosaic images */}
       <section className="container mx-auto px-4 pt-20 pb-8">
@@ -83,7 +91,7 @@ export default function AboutPage() {
                   src="./DeskBensy.jpeg"
                   alt="Sr. Bensy V K - Principal"
                   width={250}
-                  height={300}
+                  height={200}
                   className="rounded-lg shadow-md mx-auto"
                 />
                 <div className="text-center mt-4">
@@ -95,28 +103,7 @@ export default function AboutPage() {
               <div className="md:w-2/3">
                 <div className="prose prose-lg max-w-none">
                   <p className="text-gray-700 leading-relaxed mb-4">
-                    As the head of our esteemed institution, I am thrilled to extend my warmest greetings to all
-                    students, parents, faculty, and visitors. This platform serves as a window into the heart of our
-                    school, providing insights into our mission, vision, values and educational endeavors.
-                  </p>
-
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    Our school is more than just a place of learning; it's a vibrant community where ideas flourish,
-                    talents are nurtured, and futures are shaped. We are committed to fostering an environment that
-                    promotes academic excellence, personal growth, and character development. Our dedicated team of
-                    educators works tirelessly to inspire and empower each student to reach their full potential.
-                  </p>
-
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    I encourage you to explore our website to discover the myriad opportunities available at our school.
-                    From innovative curriculum offerings to extracurricular activities, we strive to provide a
-                    well-rounded educational experience that prepares students for success in an ever-changing world.
-                  </p>
-
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    I invite you to connect with us, whether you're a prospective student, a proud parent, or an alumni
-                    member. Together, we can continue to uphold the rich traditions and values that define our
-                    institution.
+                    As the head of our esteemed institution, I am thrilled to extend my warmest greetings to all students, parents, faculty, and visitors. This platform serves as a window into the heart of our school, providing insights into our mission, vision, values and educational endeavors.
                   </p>
 
                   <p className="text-gray-700 leading-relaxed">

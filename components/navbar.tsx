@@ -41,7 +41,7 @@ export default function Navbar() {
               Gallery
             </Link>
             <Link href="/cbsc-info" className="text-gray-700 hover:text-blue-600 transition-all duration-300 hover:scale-110">
-              CBSE Information
+              MANDATORY PUBLIC DISCLOSURE
             </Link>
             <Link href="/tc" className="text-gray-700 hover:text-blue-600 transition-all duration-300 hover:scale-110">
               TC
@@ -74,7 +74,7 @@ export default function Navbar() {
                 Gallery
               </Link>
               <Link href="/cbsc-info" className="text-gray-700 hover:text-blue-600 transition-colors hover:translate-x-2 transform duration-300">
-                CBSC Information
+                MANDATORY PUBLIC DISCLOSURE
               </Link>
               <Link href="/tc" className="text-gray-700 hover:text-blue-600 transition-colors hover:translate-x-2 transform duration-300">
                 TC

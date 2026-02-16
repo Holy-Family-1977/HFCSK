@@ -54,6 +54,9 @@ export default function PopupModal() {
     setIsOpen(false);
   };
 
+  // Popup is disabled for now
+  return null;
+  
   if (!isOpen || !popup) {
     return null;
   }

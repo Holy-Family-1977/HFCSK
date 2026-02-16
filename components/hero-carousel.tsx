@@ -7,10 +7,15 @@ import Image from "next/image"
 
 const slides = [
   {
+    image: "/school-activities.JPG",
+    caption: "",
+    quote: '"May the Lord continue to guide your steps and bless you with wisdom, strength, and grace in all that you pursue."',
+    isQuote: true,
+  },
+  {
     image: "./DSC_6546.JPG",
     caption: "Congratulations on Your Remarkable Journey!",
     description: "Celebrating our AISSCE 2024-25 Toppers",
-    isAchievement: true,
   },
   {
     image: "./DSC_4868.JPG",
@@ -23,7 +28,7 @@ const slides = [
     description: "Continuing our tradition of academic excellence since 1990",
   },
   {
-    image: "./DSC_0877.JPG",
+    image: "./DSC_9492.JPG",
     caption: "Where Knowledge Meets Character",
     description: "Building character alongside academic achievement",
   },
@@ -58,53 +63,48 @@ export default function HeroCarousel() {
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
-          {slide.isAchievement ? (
-            // Achievement Banner Slide
-            <div className="relative w-full h-full bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900">
+          <div className="relative w-full h-full">
+            {/* Full Image Background */}
+            {slide.video ? (
+              <video
+                src={slide.video}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
               <Image
-                src="./school-activities.JPG"
-                alt="Achievement Banner"
+                src={slide.image || "/placeholder.svg"}
+                alt={slide.caption}
                 fill
                 className="object-cover"
                 priority={index === 0}
               />
-              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center text-white">
-                <p className="text-xl md:text-2xl font-medium italic max-w-4xl">
-                  "May the Lord continue to guide your steps and bless you with wisdom, strength, and grace in all that
-                  you pursue."
+            )}
+
+            {/* Dark Overlay for readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+            {/* Content - Quote or Caption+Description */}
+            {slide.isQuote ? (
+              // Quote Slide
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center text-white px-4 md:px-8 w-full max-w-5xl">
+                <p className="text-xl md:text-2xl font-medium italic drop-shadow-lg">
+                  {slide.quote}
                 </p>
               </div>
-            </div>
-          ) : (
-            // Regular Slides
-            <>
-              {slide.video ? (
-                <video
-                  src={slide.video}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              ) : (
-                <Image
-                  src={slide.image || "/placeholder.svg"}
-                  alt={slide.caption}
-                  fill
-                  className="object-cover"
-                  priority={index === 0}
-                />
-              )}
-              <div className="absolute inset-0 bg-black/40" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white px-4 animate-fade-in">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">{slide.caption}</h1>
-                  <p className="text-xl md:text-2xl max-w-2xl mx-auto drop-shadow-md">{slide.description}</p>
+            ) : (
+              // Regular Slide with Caption and Description at Bottom
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-6 md:px-12 py-8 md:py-12">
+                <div className="text-center text-white max-w-4xl mx-auto">
+                  <h1 className="text-3xl md:text-5xl font-bold mb-3 drop-shadow-lg">{slide.caption}</h1>
+                  <p className="text-lg md:text-xl font-medium italic drop-shadow-md">{slide.description}</p>
                 </div>
               </div>
-            </>
-          )}
+            )}
+          </div>
         </div>
       ))}
 

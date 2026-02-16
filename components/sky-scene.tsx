@@ -11,7 +11,7 @@ export default function SkyScene() {
       <BackgroundSky />
 
       {/* Foreground content */}
-      <div className="relative z-10 container mx-auto px-4 py-16 md:py-24">
+      <div className="relative z-10 container mx-auto px-4 py-8 md:py-16 h-screen flex flex-col items-center justify-end pb-16 md:pb-24">
         <AnimateOnScroll variant="fade-in">
           <div className="mx-auto max-w-3xl glass rounded-3xl p-7 md:p-10 border-white/50 shadow-xl text-center">
             <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-md rounded-full px-4 py-1.5 border border-white/60 shadow-sm mb-3">

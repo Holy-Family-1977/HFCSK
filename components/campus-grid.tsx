@@ -16,9 +16,9 @@ type Card = {
 }
 
 const CARDS: Card[] = [
-  { src: "/school-activities.png", title: "Activities", tag: "FEATURED", color: "#FDE68A" },
-  { src: "/school-campus.png", title: "Campus", tag: "EARLY BIRD", color: "#FBCFE8" },
-  { src: "/classroom-learning.png", title: "Smart Classroom", tag: "NEW", color: "#BFDBFE" },
+  { src: "./DSC_9289.JPG", title: "Activities", tag: "FEATURED", color: "#FDE68A" },
+  { src: "./DSC_6627.JPG", title: "Campus", tag: "EARLY BIRD", color: "#FBCFE8" },
+  { src: "./DSC_2045.JPG", title: "Smart Classroom", tag: "NEW", color: "#BFDBFE" },
 ]
 
 export default function CampusGrid() {

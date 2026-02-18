@@ -7,47 +7,47 @@ import { X } from "lucide-react"
 const galleryImages = [
   {
     id: 1,
-    src: "/school-activities.png",
+    src: "./DSC_1555.JPG",
     alt: "School Activities",
   },
   {
     id: 2,
-    src: "/classroom-learning.png",
+    src: "./DSC_2532.JPG",
     alt: "Smart Classroom Learning",
   },
   {
     id: 3,
-    src: "/school-campus.png",
+    src: "./DSC_4868.JPG",
     alt: "School Campus",
   },
   {
     id: 4,
-    src: "/school-sports-day-fun.png",
+    src: "./DSC_8510.JPG",
     alt: "Sports Day",
   },
   {
     id: 5,
-    src: "/graduation-celebration.png",
+    src: "./DSC_1545.JPG",
     alt: "Graduation Celebration",
   },
   {
     id: 6,
-    src: "/achievement-banner.png",
+    src: "./DSC_9492.JPG",
     alt: "Achievement Banner",
   },
   {
     id: 7,
-    src: "/school-activities.png",
+    src: "./DSC_0771.JPG",
     alt: "Campus Life",
   },
   {
     id: 8,
-    src: "/school-sports-day-fun.png",
+    src: "./DSC_0407.JPG",
     alt: "Sports Event",
   },
   {
     id: 9,
-    src: "/classroom-learning.png",
+    src: "./DSC_8969.JPG",
     alt: "Learning Environment",
   },
 ]

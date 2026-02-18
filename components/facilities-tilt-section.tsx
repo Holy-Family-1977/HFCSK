@@ -13,22 +13,22 @@ const FACILITIES: Facility[] = [
   {
     title: "School Library",
     description: "Well-stocked resources for every learner.",
-    image: "/modern-school-library-shelves.jpg",
+    image: "./lib.JPG",
   },
   {
-    title: "Digital Classroom",
-    description: "Smart-class enabled rooms for immersive lessons.",
-    image: "/smart-classroom-projector-interactive-board.jpg",
+    title: "Classroom",
+    description: "An engaging space where young minds learn, explore, and grow.",
+    image: "./class.JPG",
   },
   {
     title: "Safe & Security",
     description: "Robust safety protocol and secure campus.",
-    image: "/school-security-cctv-guards.jpg",
+    image: "./security.JPG",
   },
   {
     title: "Playground",
-    description: "Spacious, safe areas for play and sports.",
-    image: "/school-playground-kids-sports-field.jpg",
+    description: "A lively field for play, teamwork, and joyful energy.",
+    image: "./sports.JPG",
   },
 ]
 

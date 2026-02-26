@@ -13,7 +13,7 @@ type Action = {
 
 const DEFAULT_ACTIONS: Action[] = [
   { label: "Visit", href: "/contact", icon: Building2 },
-  { label: "Learn More", href: "/about", icon: BookOpen },
+  { label: "Learn More", href: "./Prospectus.pdf", icon: BookOpen },
   { label: "Apply", href: "/tc", icon: ClipboardList },
   { label: "Giving", href: "/contact", icon: HeartHandshake },
 ]

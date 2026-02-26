@@ -64,15 +64,10 @@ export default function AboutPage() {
                   src="./MainBensy.jpeg"
                   alt="Principal welcoming students"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md">
-                <Image src="/school-activities.png" alt="Collaborative activities" fill className="object-cover" />
-              </div>
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md">
-                <Image src="/school-sports-day-fun.png" alt="Sports and teamwork" fill className="object-cover" />
-              </div>
+              
             </div>
           </AnimateOnScroll>
         </div>
@@ -181,7 +176,7 @@ export default function AboutPage() {
               <AnimateOnScroll variant="fade-up">
                 <div className="relative rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/classroom-learning.png"
+                    src="./DSC_7197.JPG"
                     alt="Learner-centered classrooms"
                     width={1000}
                     height={600}
@@ -206,7 +201,7 @@ export default function AboutPage() {
               <AnimateOnScroll variant="fade-up">
                 <div className="relative rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/school-activities.png"
+                    src="./DSC_8341.JPG"
                     alt="Active learning experiences"
                     width={1000}
                     height={600}

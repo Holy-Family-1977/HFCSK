@@ -1,60 +1,90 @@
 "use client"
 
-import Image from "next/image"
-import { useState } from "react"
-import { X } from "lucide-react"
+import ImageAlbumFrame from "@/components/image-album-frame"
+import VideoGallery from "@/components/video-gallery"
 
-const galleryImages = [
+const albumCollections = [
   {
-    id: 1,
-    src: "./DSC_1555.JPG",
-    alt: "School Activities",
+    id: "school-activities",
+    title: "School Activities",
+    primaryImage: {
+      src: "./DSC_1555.JPG",
+      alt: "School Activities",
+    },
+    images: [
+      { id: "1", src: "./DSC_1555.JPG", alt: "School Activity 1" },
+      { id: "2", src: "./DSC_2532.JPG", alt: "School Activity 2" },
+      { id: "3", src: "./DSC_4868.JPG", alt: "School Activity 3" },
+    ],
   },
   {
-    id: 2,
-    src: "./DSC_2532.JPG",
-    alt: "Smart Classroom Learning",
+    id: "sports-day",
+    title: "Sports Day",
+    primaryImage: {
+      src: "./DSC_8510.JPG",
+      alt: "Sports Day",
+    },
+    images: [
+      { id: "1", src: "./DSC_8510.JPG", alt: "Sports Day 1" },
+      { id: "2", src: "./DSC_0407.JPG", alt: "Sports Day 2" },
+      { id: "3", src: "./DSC_8969.JPG", alt: "Sports Day 3" },
+    ],
   },
   {
-    id: 3,
-    src: "./DSC_4868.JPG",
-    alt: "School Campus",
+    id: "celebrations",
+    title: "Celebrations",
+    primaryImage: {
+      src: "./DSC_1545.JPG",
+      alt: "Celebrations",
+    },
+    images: [
+      { id: "1", src: "./DSC_1545.JPG", alt: "Celebration 1" },
+      { id: "2", src: "./DSC_9492.JPG", alt: "Celebration 2" },
+      { id: "3", src: "./DSC_0771.JPG", alt: "Celebration 3" },
+    ],
   },
   {
-    id: 4,
-    src: "./DSC_8510.JPG",
-    alt: "Sports Day",
+    id: "campus-life",
+    title: "Campus Life",
+    primaryImage: {
+      src: "./DSC_0771.JPG",
+      alt: "Campus Life",
+    },
+    images: [
+      { id: "1", src: "./DSC_0771.JPG", alt: "Campus Life 1" },
+      { id: "2", src: "./DSC_0407.JPG", alt: "Campus Life 2" },
+      { id: "3", src: "./DSC_1555.JPG", alt: "Campus Life 3" },
+    ],
   },
   {
-    id: 5,
-    src: "./DSC_1545.JPG",
-    alt: "Graduation Celebration",
+    id: "learning-environment",
+    title: "Learning Environment",
+    primaryImage: {
+      src: "./DSC_2532.JPG",
+      alt: "Learning Environment",
+    },
+    images: [
+      { id: "1", src: "./DSC_2532.JPG", alt: "Learning 1" },
+      { id: "2", src: "./DSC_4868.JPG", alt: "Learning 2" },
+      { id: "3", src: "./DSC_9492.JPG", alt: "Learning 3" },
+    ],
   },
   {
-    id: 6,
-    src: "./DSC_9492.JPG",
-    alt: "Achievement Banner",
-  },
-  {
-    id: 7,
-    src: "./DSC_0771.JPG",
-    alt: "Campus Life",
-  },
-  {
-    id: 8,
-    src: "./DSC_0407.JPG",
-    alt: "Sports Event",
-  },
-  {
-    id: 9,
-    src: "./DSC_8969.JPG",
-    alt: "Learning Environment",
+    id: "achievements",
+    title: "Achievements",
+    primaryImage: {
+      src: "./DSC_9492.JPG",
+      alt: "Achievements",
+    },
+    images: [
+      { id: "1", src: "./DSC_9492.JPG", alt: "Achievement 1" },
+      { id: "2", src: "./DSC_8510.JPG", alt: "Achievement 2" },
+      { id: "3", src: "./DSC_1545.JPG", alt: "Achievement 3" },
+    ],
   },
 ]
 
 export default function GalleryPage() {
-  const [selectedImage, setSelectedImage] = useState<typeof galleryImages[0] | null>(null)
-
   return (
     <div className="min-h-screen bg-white">
       {/* Gradient Header */}
@@ -69,64 +99,30 @@ export default function GalleryPage() {
         </div>
       </div>
 
-      {/* Gallery Grid Section */}
+      {/* Photo Gallery Grid Section */}
       <div className="bg-white py-12 md:py-20">
         <div className="container mx-auto px-4">
-        {/* 3x3 Grid Gallery */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          {galleryImages.map((image) => (
-            <div
-              key={image.id}
-              onClick={() => setSelectedImage(image)}
-              className="relative aspect-square rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer group"
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
+          <div className="mb-12">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 text-center mb-4">Photo Albums</h2>
+            <p className="text-center text-gray-600 text-lg">Click on any album to view all photos inside</p>
+          </div>
+          {/* Album Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {albumCollections.map((album) => (
+              <ImageAlbumFrame
+                key={album.id}
+                id={album.id}
+                primaryImage={album.primaryImage}
+                images={album.images}
+                title={album.title}
               />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                <div className="text-white text-lg font-semibold">View</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      </div>
-
-      {/* Lightbox Modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-              aria-label="Close"
-            >
-              <X className="w-8 h-8 text-white" />
-            </button>
-            
-            <div className="relative w-full h-[80vh] md:max-w-3xl">
-              <Image
-                src={selectedImage.src}
-                alt={selectedImage.alt}
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-
-            {/* Navigation */}
-            <div className="mt-6 text-white text-center">
-              <p className="text-lg">{selectedImage.alt}</p>
-            </div>
+            ))}
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Video Gallery Section */}
+      <VideoGallery />
     </div>
   )
 }

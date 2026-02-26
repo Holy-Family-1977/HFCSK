@@ -10,19 +10,19 @@ const videos = [
     id: 1,
     title: 'School Opening Ceremony',
     thumbnail: './DSC_1555.JPG',
-    videoUrl: 'https://www.youtube.com/watch?v=nUulPyn8XuE&feature=youtu.be',
+    videoUrl: 'https://youtu.be/nUulPyn8XuE?si=WLaMItfmSyjbzGRC',
   },
   {
     id: 2,
     title: 'Sports Day Highlights',
     thumbnail: './DSC_8510.JPG',
-    videoUrl: 'https://www.youtube.com/watch?v=XBHZr5Azo4I',
+    videoUrl: 'https://youtu.be/XBHZr5Azo4I?si=TSUGLO115E8agDn2',
   },
   {
     id: 3,
     title: 'Kids Day',
     thumbnail: './DSC_4868.JPG',
-    videoUrl: 'https://www.youtube.com/watch?v=38J89e_7K98',
+    videoUrl: 'https://youtu.be/38J89e_7K98?si=wiFX4rvyTIs1dKar',
   },
 ]
 

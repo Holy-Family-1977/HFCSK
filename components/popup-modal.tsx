@@ -30,7 +30,13 @@ export default function PopupModal() {
         const data = await response.json();
         console.log('[v0] Fetched data:', data);
 
-        if (data && typeof data === 'object' && 'id' in data && data.is_enabled) {
+        if (
+          data &&
+          typeof data === 'object' &&
+          data !== null &&
+          'id' in data &&
+          data.is_enabled
+        ) {
           console.log('[v0] Setting popup to display');
           setPopup(data as PopupData);
           setIsOpen(true);
@@ -54,9 +60,6 @@ export default function PopupModal() {
     setIsOpen(false);
   };
 
-  // Popup is disabled for now
-  return null;
-  
   if (!isOpen || !popup) {
     return null;
   }

@@ -1,8 +1,5 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export function createClient() {
-  return createSupabaseClient(supabaseUrl, supabaseAnonKey)
-}
+/**
+ * Browser Supabase client (cookie-aware via @supabase/ssr).
+ * For Server Components / Route Handlers, use `createClient` from `@/utils/supabase/server`.
+ */
+export { createClient } from "@/utils/supabase/client";

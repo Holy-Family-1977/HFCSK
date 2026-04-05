@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
+import { getSupabasePublicKey } from '@/lib/supabase/env'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const SUPABASE_KEY = getSupabasePublicKey()
 
 export async function GET() {
   try {
@@ -9,7 +10,7 @@ export async function GET() {
 
     // Use direct REST API instead of client library to avoid JSON parsing issues
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/tc_records?order=created_at.desc`,
+      `${SUPABASE_URL}/rest/v1/transfer_certificates?order=created_at.desc`,
       {
         headers: {
           apikey: SUPABASE_KEY!,

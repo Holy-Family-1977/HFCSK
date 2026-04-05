@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { User, Lock } from 'lucide-react'
+import { createClient } from '@/lib/supabase'
+import { resolveLoginEmail } from '@/lib/auth/login-email'
 
 export default function AdminLogin() {
-  const [username, setUsername] = useState('')
+  const [username, setUsername] = useState('Admin')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,15 +22,32 @@ export default function AdminLogin() {
     setLoading(true)
     setError('')
 
-    // Simple authentication check
-    if (username === 'Admin' && password === 'Admin1234') {
-      // Set session in localStorage (in production, use proper session management)
-      localStorage.setItem('adminSession', 'true')
-      router.push('/admin/dashboard')
-    } else {
-      setError('Invalid username or password')
+    const { email, error: resolveErr } = resolveLoginEmail(username)
+    if (resolveErr || !email) {
+      setError(resolveErr ?? 'Invalid login')
+      setLoading(false)
+      return
     }
-    
+
+    try {
+      const supabase = createClient()
+      const { error: signError } = await supabase.auth.signInWithPassword({
+        email,
+        password: password.trim(),
+      })
+
+      if (signError) {
+        setError(signError.message)
+        setLoading(false)
+        return
+      }
+
+      router.push('/admin/dashboard')
+      router.refresh()
+    } catch {
+      setError('An error occurred while signing in')
+    }
+
     setLoading(false)
   }
 
@@ -40,26 +59,24 @@ export default function AdminLogin() {
             <User className="h-8 w-8 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
-          <p className="text-gray-600">Sign in to access the admin dashboard</p>
+          <p className="text-gray-600 text-sm">
+            Sign in with username and your password, or use your staff email and password.
+          </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <Label htmlFor="username">Username</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
+              <Label htmlFor="username">Username or email</Label>
+              <Input
+                id="username"
+                autoComplete="username"
+                placeholder="Admin"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
             </div>
-            
+
             <div>
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -67,7 +84,8 @@ export default function AdminLogin() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter password"
+                  autoComplete="current-password"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
@@ -75,20 +93,21 @@ export default function AdminLogin() {
                 />
               </div>
             </div>
-            
+
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-red-600 text-sm text-center">{error}</p>
               </div>
             )}
-            
-            <Button 
-              type="submit" 
+
+            <Button
+              type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={loading}
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
+            
           </form>
         </CardContent>
       </Card>

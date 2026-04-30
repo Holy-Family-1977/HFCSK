@@ -33,6 +33,7 @@ export default function ImageAlbumFrame({ id, primaryImage, images, title }: Ima
   }
 
   const openAlbum = () => {
+    if (images.length === 0) return
     setSelectedImage(images[0])
     setCurrentIndex(0)
   }

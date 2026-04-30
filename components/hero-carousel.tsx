@@ -4,46 +4,119 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { createClient } from "@/lib/supabase"
+import { HeroSlide, heroMediaUrl, toYoutubeEmbedUrl } from "@/lib/supabase/cms"
 
-const slides = [
+const fallbackSlides = [
   {
+    id: "fallback-school-activities",
+    type: "image",
     image: "/school-activities.JPG",
     caption: "",
     quote: '"May the Lord continue to guide your steps and bless you with wisdom, strength, and grace in all that you pursue."',
     isQuote: true,
   },
   {
+    id: "fallback-toppers",
+    type: "image",
     image: "./DSC_6546.JPG",
     caption: "Congratulations on Your Remarkable Journey!",
     description: "Celebrating our AISSCE 2024-25 Toppers",
   },
   {
+    id: "fallback-leaders",
+    type: "image",
     image: "./DSC_4868.JPG",
     caption: "Empowering Future Leaders",
     description: "Nurturing young minds to become tomorrow's leaders",
   },
   {
+    id: "fallback-excellence",
+    type: "image",
     image: "./DSC_0877.JPG",
     caption: "A Legacy of Excellence in Education",
     description: "Continuing our tradition of academic excellence since 1990",
   },
   {
+    id: "fallback-character",
+    type: "image",
     image: "./DSC_9492.JPG",
     caption: "Where Knowledge Meets Character",
     description: "Building character alongside academic achievement",
   },
 ]
 
+type DisplaySlide = {
+  id: string
+  type: "image" | "video" | "youtube"
+  mediaUrl: string
+  caption: string
+  description: string
+  quote?: string
+  isQuote?: boolean
+}
+
+function mapHeroSlide(slide: HeroSlide): DisplaySlide {
+  return {
+    id: slide.id,
+    type: slide.type,
+    mediaUrl: heroMediaUrl(slide),
+    caption: slide.title ?? "",
+    description: slide.subtitle ?? "",
+  }
+}
+
 export default function HeroCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [slides, setSlides] = useState<DisplaySlide[]>(
+    fallbackSlides.map((slide) => ({
+      id: slide.id,
+      type: "image",
+      mediaUrl: slide.image,
+      caption: slide.caption,
+      description: slide.description ?? "",
+      quote: slide.quote,
+      isQuote: slide.isQuote,
+    })),
+  )
 
   useEffect(() => {
+    let cancelled = false
+
+    const fetchSlides = async () => {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from("hero_slides")
+          .select("id, type, media_url, title, subtitle, order_index, created_at")
+          .order("order_index", { ascending: true })
+          .order("created_at", { ascending: true })
+
+        if (!cancelled && !error && data && data.length > 0) {
+          setSlides((data as HeroSlide[]).map(mapHeroSlide))
+          setCurrentSlide(0)
+        }
+      } catch (error) {
+        console.error("Failed to fetch hero slides:", error)
+      }
+    }
+
+    void fetchSlides()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (slides.length === 0) return
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 5000)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [slides.length])
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -65,18 +138,26 @@ export default function HeroCarousel() {
         >
           <div className="relative w-full h-full">
             {/* Full Image Background */}
-            {slide.video ? (
+            {slide.type === "video" ? (
               <video
-                src={slide.video}
+                src={slide.mediaUrl}
                 autoPlay
                 muted
                 loop
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover"
               />
+            ) : slide.type === "youtube" ? (
+              <iframe
+                src={toYoutubeEmbedUrl(slide.mediaUrl)}
+                title={slide.caption || "Hero video"}
+                className="absolute inset-0 w-full h-full object-cover"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
             ) : (
               <Image
-                src={slide.image || "/placeholder.svg"}
+                src={slide.mediaUrl || "/placeholder.svg"}
                 alt={slide.caption}
                 fill
                 className="object-cover"

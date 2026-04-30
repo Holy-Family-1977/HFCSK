@@ -1,7 +1,10 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import ImageAlbumFrame from "@/components/image-album-frame"
 import VideoGallery from "@/components/video-gallery"
+import { createClient } from "@/lib/supabase"
+import { Album, galleryImageUrl } from "@/lib/supabase/cms"
 
 const albumCollections = [
   {
@@ -84,7 +87,80 @@ const albumCollections = [
   },
 ]
 
+type GalleryAlbum = {
+  id: string
+  title: string
+  primaryImage: {
+    src: string
+    alt: string
+  }
+  images: Array<{
+    id: string
+    src: string
+    alt: string
+  }>
+}
+
+function mapAlbum(album: Album): GalleryAlbum | null {
+  const images = (album.album_images ?? [])
+    .sort((a, b) => a.order_index - b.order_index)
+    .map((image, index) => ({
+      id: image.id,
+      src: galleryImageUrl(image.image_url),
+      alt: `${album.title} ${index + 1}`,
+    }))
+
+  const cover = album.cover_image
+    ? galleryImageUrl(album.cover_image)
+    : images[0]?.src
+
+  if (!cover) return null
+
+  return {
+    id: album.id,
+    title: album.title,
+    primaryImage: {
+      src: cover,
+      alt: album.title,
+    },
+    images,
+  }
+}
+
 export default function GalleryPage() {
+  const [albums, setAlbums] = useState<GalleryAlbum[]>(albumCollections)
+
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchAlbums = async () => {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from("albums")
+          .select(
+            "id, title, cover_image, created_at, album_images(id, album_id, image_url, order_index, created_at)",
+          )
+          .order("created_at", { ascending: false })
+
+        if (!cancelled && !error && data && data.length > 0) {
+          const mapped = (data as Album[]).map(mapAlbum).filter(Boolean) as GalleryAlbum[]
+          if (mapped.length > 0) {
+            setAlbums(mapped)
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch albums:", error)
+      }
+    }
+
+    void fetchAlbums()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-white">
       {/* Gradient Header */}
@@ -108,7 +184,7 @@ export default function GalleryPage() {
           </div>
           {/* Album Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {albumCollections.map((album) => (
+            {albums.map((album) => (
               <ImageAlbumFrame
                 key={album.id}
                 id={album.id}

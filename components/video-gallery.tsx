@@ -1,25 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Image from 'next/image'
 import { Play } from 'lucide-react'
+import { createClient } from '@/lib/supabase'
+import { MediaCenterItem, mediaCenterUrl, toYoutubeEmbedUrl } from '@/lib/supabase/cms'
 
 const videos = [
   {
-    id: 1,
+    id: 'fallback-opening',
     title: 'School Opening Ceremony',
     thumbnail: './DSC_1555.JPG',
     videoUrl: 'https://youtu.be/nUulPyn8XuE?si=WLaMItfmSyjbzGRC',
   },
   {
-    id: 2,
+    id: 'fallback-sports',
     title: 'Sports Day Highlights',
     thumbnail: './DSC_8510.JPG',
     videoUrl: 'https://youtu.be/XBHZr5Azo4I?si=TSUGLO115E8agDn2',
   },
   {
-    id: 3,
+    id: 'fallback-kids',
     title: 'Kids Day',
     thumbnail: './DSC_4868.JPG',
     videoUrl: 'https://youtu.be/38J89e_7K98?si=wiFX4rvyTIs1dKar',
@@ -65,8 +67,96 @@ const magazines = [
   },
 ]
 
+type MediaVideo = {
+  id: string
+  title: string
+  thumbnail: string
+  videoUrl: string
+}
+
+type MediaPhotoGallery = {
+  id: string
+  title: string
+  images: string[]
+}
+
+type MediaMagazine = {
+  id: string
+  title: string
+  cover: string
+  pages: number
+  mediaUrl?: string
+}
+
 export default function VideoGallery() {
-  const [selectedVideo, setSelectedVideo] = useState(videos[0])
+  const [videoItems, setVideoItems] = useState<MediaVideo[]>(videos)
+  const [photoItems, setPhotoItems] = useState<MediaPhotoGallery[]>(photoGalleries.map((item) => ({ ...item, id: String(item.id) })))
+  const [magazineItems, setMagazineItems] = useState<MediaMagazine[]>(magazines.map((item) => ({ ...item, id: String(item.id) })))
+  const [selectedVideoId, setSelectedVideoId] = useState(videos[0].id)
+  const selectedVideo = useMemo(
+    () => videoItems.find((video) => video.id === selectedVideoId) ?? videoItems[0],
+    [selectedVideoId, videoItems],
+  )
+
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchMediaCenter = async () => {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from('media_center_items')
+          .select('id, type, title, media_url, thumbnail_url, pages, order_index, created_at')
+          .order('order_index', { ascending: true })
+          .order('created_at', { ascending: true })
+
+        if (cancelled || error || !data || data.length === 0) return
+
+        const items = data as MediaCenterItem[]
+        const cmsVideos = items
+          .filter((item) => item.type === 'video')
+          .map((item) => ({
+            id: item.id,
+            title: item.title,
+            thumbnail: item.thumbnail_url ? mediaCenterUrl(item.thumbnail_url) : './DSC_1555.JPG',
+            videoUrl: item.media_url,
+          }))
+        const cmsPhotos = items
+          .filter((item) => item.type === 'photo')
+          .map((item) => ({
+            id: item.id,
+            title: item.title,
+            images: [mediaCenterUrl(item.media_url)],
+          }))
+        const cmsMagazines = items
+          .filter((item) => item.type === 'magazine')
+          .map((item) => ({
+            id: item.id,
+            title: item.title,
+            cover: item.thumbnail_url ? mediaCenterUrl(item.thumbnail_url) : mediaCenterUrl(item.media_url),
+            pages: item.pages ?? 0,
+            mediaUrl: mediaCenterUrl(item.media_url),
+          }))
+
+        if (cmsVideos.length) {
+          setVideoItems(cmsVideos)
+          setSelectedVideoId(cmsVideos[0].id)
+        }
+        if (cmsPhotos.length) setPhotoItems(cmsPhotos)
+        if (cmsMagazines.length) setMagazineItems(cmsMagazines)
+      } catch (error) {
+        console.error('Failed to fetch media center:', error)
+      }
+    }
+
+    void fetchMediaCenter()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (!selectedVideo) return null
 
   return (
     <div className="bg-white py-12 md:py-20">
@@ -92,7 +182,7 @@ export default function VideoGallery() {
                   <iframe
                     width="100%"
                     height="100%"
-                    src={selectedVideo.videoUrl}
+                    src={toYoutubeEmbedUrl(selectedVideo.videoUrl)}
                     title={selectedVideo.title}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -107,10 +197,10 @@ export default function VideoGallery() {
               <div className="space-y-3">
                 <h4 className="text-lg font-bold text-gray-900">Playlist</h4>
                 <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {videos.map((video) => (
+                  {videoItems.map((video) => (
                     <div
                       key={video.id}
-                      onClick={() => setSelectedVideo(video)}
+                      onClick={() => setSelectedVideoId(video.id)}
                       className={`p-3 rounded-lg cursor-pointer transition-all duration-300 ${
                         selectedVideo.id === video.id
                           ? 'bg-blue-600 text-white shadow-lg'
@@ -128,7 +218,7 @@ export default function VideoGallery() {
           {/* Photos Tab */}
           <TabsContent value="photos" className="space-y-8">
             <div className="grid gap-8">
-              {photoGalleries.map((gallery) => (
+              {photoItems.map((gallery) => (
                 <div key={gallery.id}>
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">{gallery.title}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -151,7 +241,7 @@ export default function VideoGallery() {
           {/* Magazines Tab */}
           <TabsContent value="magazines" className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {magazines.map((magazine) => (
+              {magazineItems.map((magazine) => (
                 <div key={magazine.id} className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group">
                   <div className="relative aspect-[3/4] overflow-hidden bg-gray-200">
                     <Image
@@ -169,7 +259,10 @@ export default function VideoGallery() {
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{magazine.title}</h3>
                     <p className="text-sm text-gray-600">{magazine.pages} Pages</p>
-                    <button className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105">
+                    <button
+                      className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      onClick={() => magazine.mediaUrl && window.open(magazine.mediaUrl, '_blank', 'noopener,noreferrer')}
+                    >
                       View Magazine
                     </button>
                   </div>

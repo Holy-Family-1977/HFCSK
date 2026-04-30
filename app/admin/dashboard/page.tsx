@@ -3,6 +3,7 @@
 import React from "react"
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Plus, Edit, Trash2, LogOut, FileText, Upload, X, KeyRound, Users } from 'lucide-react'
+import { Plus, Edit, Trash2, LogOut, FileText, Upload, X, KeyRound, Users, Images, MonitorPlay } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
 import { announcementImagePublicUrl } from '@/lib/supabase/announcement-urls'
 import { invokeAdminManagement } from '@/lib/supabase/admin-management'
@@ -651,6 +652,37 @@ export default function AdminDashboard() {
             <LogOut className="h-4 w-4" />
             <span>Logout</span>
           </Button>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <MonitorPlay className="h-5 w-5 text-blue-600" />
+                Hero Slider
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">Manage homepage slider images, videos, YouTube links, text, and order.</p>
+              <Button asChild>
+                <Link href="/admin/hero">Manage hero</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Images className="h-5 w-5 text-blue-600" />
+                Gallery Albums
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">Create albums, upload images, choose covers, delete media, and reorder photos.</p>
+              <Button asChild>
+                <Link href="/admin/gallery">Manage gallery</Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">

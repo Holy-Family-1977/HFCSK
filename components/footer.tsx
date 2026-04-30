@@ -15,7 +15,7 @@ export default function Footer() {
               <span className="text-lg font-bold">Holy Family Convent Sr. Sec. School</span>
             </div>
             <p className="text-gray-300 mb-4">
-              Empowering future leaders through quality education and character development since 1977.
+              Empowering future leaders through quality education and character development since 1990.
             </p>
           </div>
 

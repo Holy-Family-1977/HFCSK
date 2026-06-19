@@ -93,7 +93,7 @@ function GeneralInformation() {
     { sl: 2, info: 'AFFILIATION NO.', details: 'CBSE: 1030296' },
     { sl: 3, info: 'REGISTRATION NO.', details: 'REG NO: 1030296' },
     { sl: 4, info: 'COMPLETE ADDRESS WITH PIN CODE', details: 'HOLY FAMILY CONVENT SR. SEC. SCHOOL, KHURAI, P.O. KHURAI' },
-    { sl: 5, info: 'PRINCIPAL NAME & QUALIFICATION', details: 'SR. BENSY V K (M.A, M.Ed)' },
+    { sl: 5, info: 'PRINCIPAL NAME & QUALIFICATION', details: 'SR. BENSY V K (M.A)' },
     { sl: 6, info: 'PHONE NUMBER', details: '+91 89896 62026' },
     { sl: 7, info: 'EMAIL ID', details: 'holyfamilychssk@rediffmail.com' },
   ]

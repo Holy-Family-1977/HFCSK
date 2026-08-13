@@ -1,12 +1,15 @@
 'use client'
 
 import React from "react"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FileText, Play } from 'lucide-react'
+import { createClient } from '@/lib/supabase'
+import { getDocumentUrl } from '@/lib/supabase/public-documents'
 
 export default function MandatoryPublicDisclosurePage() {
   const [activeTab, setActiveTab] = useState('general')
+  const [viewingPDF, setViewingPDF] = useState<{ name: string; url: string } | null>(null)
 
   return (
     <main className="min-h-screen bg-white relative overflow-hidden">
@@ -73,21 +76,64 @@ export default function MandatoryPublicDisclosurePage() {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-12 relative z-10">
-        {activeTab === 'general' && <GeneralInformation />}
-        {activeTab === 'documents' && <DocumentsAndInformation />}
+        {activeTab === 'general' && <GeneralInformation setViewingPDF={setViewingPDF} />}
+        {activeTab === 'documents' && <DocumentsAndInformation setViewingPDF={setViewingPDF} />}
         {activeTab === 'results' && <ResultsAndAcademics />}
         {activeTab === 'staff' && <StaffTeaching />}
         {activeTab === 'infrastructure' && <SchoolInfrastructure />}
       </div>
+
+      {/* PDF Viewer Modal */}
+      {viewingPDF && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setViewingPDF(null)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+              <h3 className="text-2xl font-bold">{viewingPDF.name}</h3>
+              <button
+                onClick={() => setViewingPDF(null)}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 h-[calc(90vh-100px)] overflow-auto bg-gray-50">
+              {viewingPDF.url.endsWith('.pdf') ? (
+                <iframe
+                  src={viewingPDF.url}
+                  className="w-full h-full border-0"
+                  title={viewingPDF.name}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <p className="text-gray-600 mb-4">Unable to preview document</p>
+                    <a
+                      href={viewingPDF.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
+                    >
+                      Download File
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
 
 
 
-function GeneralInformation() {
-  const [viewingPDF, setViewingPDF] = useState<{ name: string; url: string } | null>(null)
-
+function GeneralInformation({
+  setViewingPDF,
+}: {
+  setViewingPDF: (pdf: { name: string; url: string } | null) => void
+}) {
   const generalInfo = [
     { sl: 1, info: 'NAME OF THE SCHOOL', details: 'HOLY FAMILY CONVENT SR. SEC. SCHOOL' },
     { sl: 2, info: 'AFFILIATION NO.', details: 'CBSE: 1030296' },
@@ -98,13 +144,39 @@ function GeneralInformation() {
     { sl: 7, info: 'EMAIL ID', details: 'holyfamilychssk@rediffmail.com' },
   ]
 
-  const mandatoryDocuments = [
+  const defaultMandatoryDocuments = [
     { sl: 1, doc: 'MANDATORY PUBLIC DISCLOSURE (MAIN)', url: '/PMD/mpd.pdf' },
     { sl: 2, doc: 'RTE', url: '/PMD/RTE MP Recognition.pdf' },
     { sl: 3, doc: 'SELF CERTIFICATE', url: '/PMD/Self Certificate.pdf' },
     { sl: 4, doc: 'SCHOOL INFRASTRUCTURE', url: '/PMD/SCHOOL INFRASTRUCTURE.pdf' },
-    
   ]
+
+  const [mandatoryDocuments, setMandatoryDocuments] = useState<{ sl: number; doc: string; url: string }[]>(defaultMandatoryDocuments)
+
+  useEffect(() => {
+    async function fetchMandatoryDocs() {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from('public_disclosure_documents')
+          .select('*')
+          .eq('section', 'mandatory')
+          .order('sl_no', { ascending: true })
+
+        if (!error && data && data.length > 0) {
+          const mapped = data.map((item: { sl_no: number; document_name: string; file_path: string }) => ({
+            sl: item.sl_no,
+            doc: item.document_name,
+            url: getDocumentUrl(item.file_path),
+          }))
+          setMandatoryDocuments(mapped)
+        }
+      } catch (err) {
+        console.error('Error fetching mandatory disclosure docs:', err)
+      }
+    }
+    fetchMandatoryDocs()
+  }, [])
 
   return (
     <div className="space-y-8">
@@ -179,55 +251,16 @@ function GeneralInformation() {
           </table>
         </div>
       </section>
-
-      {/* PDF Viewer Modal */}
-      {viewingPDF && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setViewingPDF(null)}>
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
-              <h3 className="text-2xl font-bold">{viewingPDF.name}</h3>
-              <button
-                onClick={() => setViewingPDF(null)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <div className="p-6 h-[calc(90vh-100px)] overflow-auto bg-gray-50">
-              {viewingPDF.url.endsWith('.pdf') ? (
-                <iframe
-                  src={viewingPDF.url}
-                  className="w-full h-full border-0"
-                  title={viewingPDF.name}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 mb-4">Unable to preview document</p>
-                    <a
-                      href={viewingPDF.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all"
-                    >
-                      Download File
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
 
-function DocumentsAndInformation() {
-  const [viewingPDF, setViewingPDF] = useState<{ name: string; url: string } | null>(null)
-
-  const documents = [
+function DocumentsAndInformation({
+  setViewingPDF,
+}: {
+  setViewingPDF: (pdf: { name: string; url: string } | null) => void
+}) {
+  const defaultDocuments = [
     { sl: 1, doc: 'Calendar', url: '/PMD/13 Calendar 2025-26.pdf' },
     { sl: 2, doc: 'Book List', url: '/PMD/06 Book List (2025-26)-8.pdf' },
     { sl: 3, doc: 'PTA', url: '/PMD/07 PTA (2025-26) Sign.pdf' },
@@ -243,6 +276,33 @@ function DocumentsAndInformation() {
     { sl: 13, doc: 'Students Strength List', url: '/PMD/21 Students Strength List 2025-26' },
     { sl: 14, doc: 'Drinking Water', url: '/PMD/24 Drinking water Sign.pdf' },
   ]
+
+  const [documents, setDocuments] = useState<{ sl: number; doc: string; url: string }[]>(defaultDocuments)
+
+  useEffect(() => {
+    async function fetchSectionBDocs() {
+      try {
+        const supabase = createClient()
+        const { data, error } = await supabase
+          .from('public_disclosure_documents')
+          .select('*')
+          .eq('section', 'documents_info')
+          .order('sl_no', { ascending: true })
+
+        if (!error && data && data.length > 0) {
+          const mapped = data.map((item: { sl_no: number; document_name: string; file_path: string }) => ({
+            sl: item.sl_no,
+            doc: item.document_name,
+            url: getDocumentUrl(item.file_path),
+          }))
+          setDocuments(mapped)
+        }
+      } catch (err) {
+        console.error('Error fetching Section B docs:', err)
+      }
+    }
+    fetchSectionBDocs()
+  }, [])
 
   const videos = [
     { sl: 15, title: 'School Virtual Tour', url: 'https://youtube.com/embed/dQw4w9WgXcQ' },
@@ -309,46 +369,6 @@ function DocumentsAndInformation() {
           </table>
         </div>
       </section>
-
-      {viewingPDF && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setViewingPDF(null)}>
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
-              <h3 className="text-2xl font-bold">{viewingPDF.name}</h3>
-              <button
-                onClick={() => setViewingPDF(null)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <div className="p-6 h-[calc(90vh-100px)] overflow-auto bg-gray-50">
-              {viewingPDF.url.endsWith('.pdf') ? (
-                <iframe
-                  src={viewingPDF.url}
-                  className="w-full h-full border-0"
-                  title={viewingPDF.name}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 mb-4">Unable to preview document</p>
-                    <a
-                      href={viewingPDF.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all"
-                    >
-                      Download File
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

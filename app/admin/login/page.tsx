@@ -44,8 +44,8 @@ export default function AdminLogin() {
 
       router.push('/admin/dashboard')
       router.refresh()
-    } catch {
-      setError('An error occurred while signing in')
+    } catch (err: any) {
+      setError(err?.message || 'An error occurred while signing in')
     }
 
     setLoading(false)

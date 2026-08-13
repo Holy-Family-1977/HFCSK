@@ -26,9 +26,12 @@ interface TCRecord {
 
 interface CBSCDocument {
   id: string
-  name: string
-  url: string
-  uploadedAt: string
+  section: 'mandatory' | 'documents_info'
+  sl_no: number
+  document_name: string
+  file_path: string
+  created_at?: string
+  updated_at?: string
 }
 
 interface AnnouncementData {
@@ -50,6 +53,19 @@ interface StaffProfile {
 export default function AdminDashboard() {
   const [tcRecords, setTcRecords] = useState<TCRecord[]>([])
   const [cbscDocuments, setCbscDocuments] = useState<CBSCDocument[]>([])
+  const [isCreateCbscDialogOpen, setIsCreateCbscDialogOpen] = useState(false)
+  const [isEditCbscDialogOpen, setIsEditCbscDialogOpen] = useState(false)
+  const [editingCbscDoc, setEditingCbscDoc] = useState<CBSCDocument | null>(null)
+  const [cbscFormData, setCbscFormData] = useState<{
+    section: 'mandatory' | 'documents_info'
+    sl_no: number
+    document_name: string
+  }>({
+    section: 'mandatory',
+    sl_no: 1,
+    document_name: '',
+  })
+  const [cbscSelectedFile, setCbscSelectedFile] = useState<File | null>(null)
   const [announcement, setAnnouncement] = useState<AnnouncementData | null>(null)
   const [activeTab, setActiveTab] = useState<'tc' | 'cbsc' | 'popup' | 'staff'>('tc')
   const [loading, setLoading] = useState(true)
@@ -62,8 +78,6 @@ export default function AdminDashboard() {
   })
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
-  const [newDocName, setNewDocName] = useState('')
-  const [newDocFile, setNewDocFile] = useState<File | null>(null)
   const [announcementData, setAnnouncementData] = useState<AnnouncementData>({
     id: undefined,
     title: 'Admissions Started',
@@ -171,8 +185,24 @@ export default function AdminDashboard() {
   }
 
   const fetchCBSCDocuments = async () => {
-    // Mock data for now - can be replaced with API call
-    setCbscDocuments([])
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('public_disclosure_documents')
+        .select('*')
+        .order('section', { ascending: true })
+        .order('sl_no', { ascending: true })
+
+      if (error) {
+        console.error('Error fetching CBSC documents:', error.message || JSON.stringify(error))
+        setCbscDocuments([])
+        return
+      }
+      setCbscDocuments((data as CBSCDocument[]) || [])
+    } catch (err) {
+      console.error('Error fetching CBSC documents:', err)
+      setCbscDocuments([])
+    }
   }
 
   const fetchTCRecords = async () => {
@@ -406,47 +436,165 @@ export default function AdminDashboard() {
     window.location.reload()
   }
 
+  const uploadPublicDocPdf = async (file: File): Promise<string | null> => {
+    try {
+      const supabase = createClient()
+      const path = `docs/${crypto.randomUUID()}.pdf`
+      const { error: uploadError } = await supabase.storage
+        .from('public-documents')
+        .upload(path, file, {
+          contentType: 'application/pdf',
+          upsert: false,
+        })
+
+      if (uploadError) {
+        console.error('Error uploading PDF:', uploadError)
+        return null
+      }
+      return path
+    } catch (err) {
+      console.error('Error uploading PDF:', err)
+      return null
+    }
+  }
+
   const handleAddCBSCDocument = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newDocName || !newDocFile) {
-      alert('Please fill all fields')
+    if (!cbscFormData.document_name) {
+      alert('Please enter document name')
       return
     }
 
     setUploading(true)
     try {
-      const formData = new FormData()
-      formData.append('file', newDocFile)
-
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      })
-
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json()
-        const newDoc: CBSCDocument = {
-          id: Math.random().toString(),
-          name: newDocName,
-          url: uploadData.url,
-          uploadedAt: new Date().toISOString().split('T')[0]
+      let filePath = ''
+      if (cbscSelectedFile) {
+        const uploadedPath = await uploadPublicDocPdf(cbscSelectedFile)
+        if (!uploadedPath) {
+          alert('Failed to upload PDF file to storage.')
+          setUploading(false)
+          return
         }
-        setCbscDocuments([newDoc, ...cbscDocuments])
-        setNewDocName('')
-        setNewDocFile(null)
+        filePath = uploadedPath
+      }
+
+      const supabase = createClient()
+      const { error } = await supabase.from('public_disclosure_documents').insert([
+        {
+          section: cbscFormData.section,
+          sl_no: Number(cbscFormData.sl_no),
+          document_name: cbscFormData.document_name,
+          file_path: filePath,
+        },
+      ])
+
+      if (error) {
+        console.error('Error adding document:', error)
+        alert(error.message || 'Failed to add document')
+      } else {
+        setIsCreateCbscDialogOpen(false)
+        setCbscFormData({ section: 'mandatory', sl_no: 1, document_name: '' })
+        setCbscSelectedFile(null)
+        fetchCBSCDocuments()
       }
     } catch (err) {
-      console.error('Error uploading document:', err)
-      alert('Failed to upload document')
+      console.error('Error adding document:', err)
+      alert('An error occurred')
     } finally {
       setUploading(false)
     }
   }
 
-  const handleDeleteCBSCDocument = (id: string) => {
-    if (confirm('Are you sure?')) {
-      setCbscDocuments(cbscDocuments.filter(doc => doc.id !== id))
+  const handleEditCBSCDocument = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingCbscDoc) return
+
+    setUploading(true)
+    try {
+      const supabase = createClient()
+      const updatePayload: {
+        section: 'mandatory' | 'documents_info'
+        sl_no: number
+        document_name: string
+        file_path?: string
+      } = {
+        section: cbscFormData.section,
+        sl_no: Number(cbscFormData.sl_no),
+        document_name: cbscFormData.document_name,
+      }
+
+      if (cbscSelectedFile) {
+        const newPath = await uploadPublicDocPdf(cbscSelectedFile)
+        if (!newPath) {
+          alert('Failed to upload new PDF file.')
+          setUploading(false)
+          return
+        }
+        updatePayload.file_path = newPath
+
+        if (editingCbscDoc.file_path && !editingCbscDoc.file_path.startsWith('/') && !editingCbscDoc.file_path.startsWith('http')) {
+          await supabase.storage.from('public-documents').remove([editingCbscDoc.file_path])
+        }
+      }
+
+      const { error } = await supabase
+        .from('public_disclosure_documents')
+        .update(updatePayload)
+        .eq('id', editingCbscDoc.id)
+
+      if (error) {
+        console.error('Error updating document:', error)
+        alert(error.message || 'Failed to update document')
+      } else {
+        setIsEditCbscDialogOpen(false)
+        setEditingCbscDoc(null)
+        setCbscFormData({ section: 'mandatory', sl_no: 1, document_name: '' })
+        setCbscSelectedFile(null)
+        fetchCBSCDocuments()
+      }
+    } catch (err) {
+      console.error('Error updating document:', err)
+      alert('An error occurred')
+    } finally {
+      setUploading(false)
     }
+  }
+
+  const handleDeleteCBSCDocument = async (doc: CBSCDocument) => {
+    if (!confirm(`Are you sure you want to delete "${doc.document_name}"?`)) return
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('public_disclosure_documents')
+        .delete()
+        .eq('id', doc.id)
+
+      if (error) {
+        console.error('Error deleting document:', error)
+        alert('Failed to delete document')
+        return
+      }
+
+      if (doc.file_path && !doc.file_path.startsWith('/') && !doc.file_path.startsWith('http')) {
+        await supabase.storage.from('public-documents').remove([doc.file_path])
+      }
+      fetchCBSCDocuments()
+    } catch (err) {
+      console.error('Error deleting document:', err)
+      alert('An error occurred')
+    }
+  }
+
+  const openEditCbscDialog = (doc: CBSCDocument) => {
+    setEditingCbscDoc(doc)
+    setCbscFormData({
+      section: doc.section,
+      sl_no: doc.sl_no,
+      document_name: doc.document_name,
+    })
+    setCbscSelectedFile(null)
+    setIsEditCbscDialogOpen(true)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -990,9 +1138,9 @@ export default function AdminDashboard() {
 
         {/* CBS Tab Content */}
         {activeTab === 'cbsc' && (
-          <div>
+          <div className="space-y-6">
             {/* Stats */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid md:grid-cols-3 gap-6">
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
@@ -1000,7 +1148,7 @@ export default function AdminDashboard() {
                       <FileText className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Total CBS Documents</p>
+                      <p className="text-sm text-gray-600">Total Disclosure / CBSC Documents</p>
                       <p className="text-2xl font-bold">{cbscDocuments.length}</p>
                     </div>
                   </div>
@@ -1009,50 +1157,261 @@ export default function AdminDashboard() {
             </div>
 
             {/* Actions */}
-            <div className="mb-6">
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-4 w-4 mr-2" />
-                Add New CBS Document
-              </Button>
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-800">Mandatory Public Disclosure & Section B Documents</h2>
+              <Dialog open={isCreateCbscDialogOpen} onOpenChange={setIsCreateCbscDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add New Document
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Public Disclosure Document</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleAddCBSCDocument} className="space-y-4">
+                    <div>
+                      <Label htmlFor="cbsc_section">Section</Label>
+                      <select
+                        id="cbsc_section"
+                        className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={cbscFormData.section}
+                        onChange={(e) =>
+                          setCbscFormData({
+                            ...cbscFormData,
+                            section: e.target.value as 'mandatory' | 'documents_info',
+                          })
+                        }
+                      >
+                        <option value="mandatory">Section A: Mandatory Public Disclosure Documents</option>
+                        <option value="documents_info">Section B: Documents and Information</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label htmlFor="cbsc_sl_no">SL. NO</Label>
+                      <Input
+                        id="cbsc_sl_no"
+                        type="number"
+                        min={1}
+                        value={cbscFormData.sl_no}
+                        onChange={(e) =>
+                          setCbscFormData({ ...cbscFormData, sl_no: Number(e.target.value) })
+                        }
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cbsc_doc_name">Document Name / Title</Label>
+                      <Input
+                        id="cbsc_doc_name"
+                        value={cbscFormData.document_name}
+                        onChange={(e) =>
+                          setCbscFormData({ ...cbscFormData, document_name: e.target.value })
+                        }
+                        placeholder="e.g. Fee Structure"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cbsc_file">PDF File (optional if using default static path)</Label>
+                      <Input
+                        id="cbsc_file"
+                        type="file"
+                        accept="application/pdf,.pdf"
+                        onChange={(e) => setCbscSelectedFile(e.target.files?.[0] || null)}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">PDF file to be uploaded to Supabase storage.</p>
+                    </div>
+                    <Button type="submit" disabled={uploading} className="w-full">
+                      {uploading ? 'Adding...' : 'Add Document'}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
 
-            {/* CBS Documents Table */}
+            {/* Section A Table */}
             <Card>
-              <CardHeader>
-                <CardTitle>CBS Documents</CardTitle>
+              <CardHeader className="bg-indigo-50 border-b">
+                <CardTitle className="text-indigo-900 text-lg">
+                  Section A: Mandatory Public Disclosure Documents
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Uploaded At</TableHead>
+                      <TableHead className="w-16">SL.NO</TableHead>
+                      <TableHead>Document Name</TableHead>
+                      <TableHead>File Source</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {cbscDocuments.map((doc) => (
-                      <TableRow key={doc.id}>
-                        <TableCell className="font-medium">{doc.name}</TableCell>
-                        <TableCell>{new Date(doc.uploadedAt).toLocaleDateString()}</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteCBSCDocument(doc.id)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                    {cbscDocuments
+                      .filter((d) => d.section === 'mandatory')
+                      .map((doc) => (
+                        <TableRow key={doc.id}>
+                          <TableCell className="font-medium">{doc.sl_no}</TableCell>
+                          <TableCell className="font-medium text-gray-900">{doc.document_name}</TableCell>
+                          <TableCell className="text-xs text-gray-500 truncate max-w-xs">{doc.file_path}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => openEditCbscDialog(doc)}
+                              >
+                                <Edit className="h-4 w-4 mr-1" />
+                                Edit / Upload PDF
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDeleteCBSCDocument(doc)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    {cbscDocuments.filter((d) => d.section === 'mandatory').length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-6 text-gray-500">
+                          No documents found in Section A. Click "Add New Document" or run `scripts/setup-public-disclosure.sql`.
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
             </Card>
+
+            {/* Section B Table */}
+            <Card>
+              <CardHeader className="bg-green-50 border-b">
+                <CardTitle className="text-green-900 text-lg">
+                  Section B: Documents and Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-16">SL.NO</TableHead>
+                      <TableHead>Document Name</TableHead>
+                      <TableHead>File Source</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {cbscDocuments
+                      .filter((d) => d.section === 'documents_info')
+                      .map((doc) => (
+                        <TableRow key={doc.id}>
+                          <TableCell className="font-medium">{doc.sl_no}</TableCell>
+                          <TableCell className="font-medium text-gray-900">{doc.document_name}</TableCell>
+                          <TableCell className="text-xs text-gray-500 truncate max-w-xs">{doc.file_path}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => openEditCbscDialog(doc)}
+                              >
+                                <Edit className="h-4 w-4 mr-1" />
+                                Edit / Upload PDF
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDeleteCBSCDocument(doc)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    {cbscDocuments.filter((d) => d.section === 'documents_info').length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-6 text-gray-500">
+                          No documents found in Section B. Click "Add New Document" or run `scripts/setup-public-disclosure.sql`.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Edit Dialog */}
+            <Dialog open={isEditCbscDialogOpen} onOpenChange={setIsEditCbscDialogOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Document / Replace PDF</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleEditCBSCDocument} className="space-y-4">
+                  <div>
+                    <Label htmlFor="edit_cbsc_section">Section</Label>
+                    <select
+                      id="edit_cbsc_section"
+                      className="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={cbscFormData.section}
+                      onChange={(e) =>
+                        setCbscFormData({
+                          ...cbscFormData,
+                          section: e.target.value as 'mandatory' | 'documents_info',
+                        })
+                      }
+                    >
+                      <option value="mandatory">Section A: Mandatory Public Disclosure Documents</option>
+                      <option value="documents_info">Section B: Documents and Information</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit_cbsc_sl_no">SL. NO</Label>
+                    <Input
+                      id="edit_cbsc_sl_no"
+                      type="number"
+                      min={1}
+                      value={cbscFormData.sl_no}
+                      onChange={(e) =>
+                        setCbscFormData({ ...cbscFormData, sl_no: Number(e.target.value) })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit_cbsc_doc_name">Document Name / Title</Label>
+                    <Input
+                      id="edit_cbsc_doc_name"
+                      value={cbscFormData.document_name}
+                      onChange={(e) =>
+                        setCbscFormData({ ...cbscFormData, document_name: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit_cbsc_file">Upload New PDF (optional - leave empty to keep existing file)</Label>
+                    <Input
+                      id="edit_cbsc_file"
+                      type="file"
+                      accept="application/pdf,.pdf"
+                      onChange={(e) => setCbscSelectedFile(e.target.files?.[0] || null)}
+                    />
+                  </div>
+                  <Button type="submit" disabled={uploading} className="w-full">
+                    {uploading ? 'Updating...' : 'Update Document'}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         )}
 

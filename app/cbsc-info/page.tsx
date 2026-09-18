@@ -375,11 +375,11 @@ function DocumentsAndInformation({
 
 function ResultsAndAcademics() {
   const classXResults = [
-    { sl: 1, year: 2025, registered: 149, passed: 149, percentage: 98.6, remarks: '' },
+    { sl: 1, year: 2026, registered: 128, passed: 127, percentage: 99.22, remarks: '' },
   ]
 
   const classXIIResults = [
-    { sl: 1, year: 2025, registered: 76, passed: 76, percentage: 100, remarks: '' },
+    { sl: 1, year: 2026, registered: 97, passed:97 , percentage: 100, remarks: '' },
   ]
 
   return (

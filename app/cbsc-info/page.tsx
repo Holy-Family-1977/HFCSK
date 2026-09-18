@@ -471,7 +471,7 @@ function StaffTeaching() {
     { dept: 'PGT', sn: 3, name: 'Beena C J (Sr. Beena Jacob)', designation: 'Vice Principal', qualification: 'M.Sc, B.Ed' },
     { dept: 'PGT', sn: 4, name: 'Mr. Mahendra Choudhary', designation: 'PGT', qualification: 'M.Sc.,B.Ed, PGDCA' },
     { dept: 'PGT', sn: 5, name: 'Mr. Vijay Kumar Jain', designation: 'PGT', qualification: 'M.A.,Ph.D, B.Ed' },
-    { dept: 'PGT', sn: 6, name: 'Mr. Louis Davis A', designation: 'PGT', qualification: 'M.Ped, M.Phil, PGDY' },
+    { dept: 'PGT', sn: 6, name: 'Shaiby George', designation: 'PGT', qualification: 'M.A, B.Ed' },
     { dept: 'PGT', sn: 7, name: 'Mrs. Aji James Varghese', designation: 'PGT', qualification: 'MA, B.Ed' },
     { dept: 'PGT', sn: 8, name: 'Saniya T. Jose (Sr. Christel)', designation: 'PGT', qualification: 'M.Com, B.Ed' },
     { dept: 'PGT', sn: 9, name: 'Ms. Anshika Shrivastava', designation: 'PGT', qualification: 'M.Com,B.Ed, PGDCA' },

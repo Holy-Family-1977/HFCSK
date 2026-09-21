@@ -467,7 +467,7 @@ function StaffTeaching() {
   const staffData = [
     // PGT
     { dept: 'PGT', sn: 1, name: 'Baby C.O. (Sr. Savidha)', designation: 'Manager', qualification: 'M.A., B.Ed.' },
-    { dept: 'PGT', sn: 2, name: 'Bensy V K (Sr. Catherine)', designation: 'Principal', qualification: 'M.A, M.Ed.' },
+    { dept: 'PGT', sn: 2, name: 'Bensy V K (Sr. Catherine)', designation: 'Principal', qualification: 'M.A, B.Ed.' },
     { dept: 'PGT', sn: 3, name: 'Beena C J (Sr. Beena Jacob)', designation: 'Vice Principal', qualification: 'M.Sc, B.Ed' },
     { dept: 'PGT', sn: 4, name: 'Mr. Mahendra Choudhary', designation: 'PGT', qualification: 'M.Sc.,B.Ed, PGDCA' },
     { dept: 'PGT', sn: 5, name: 'Mr. Vijay Kumar Jain', designation: 'PGT', qualification: 'M.A.,Ph.D, B.Ed' },

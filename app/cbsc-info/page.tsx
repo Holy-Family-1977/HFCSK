@@ -510,7 +510,7 @@ function StaffTeaching() {
     { dept: 'PRT', sn: 1, name: 'Mrs. Vinita Jain', designation: 'PRT', qualification: 'M.A, B.Ed' },
     { dept: 'PRT', sn: 2, name: 'Mrs. Harpreet Chawla', designation: 'PRT', qualification: 'M.Sc.,B.Ed' },
     { dept: 'PRT', sn: 3, name: 'Mrs. Kalpana Mishra', designation: 'PRT', qualification: 'M.A , B.Ed' },
-    { dept: 'PRT', sn: 4, name: 'Mrs.Priya Jain', designation: 'PRT', qualification: 'M.Com, B.ED.,M.Lib' },
+    { dept: 'PRT', sn: 4, name: 'Mrs. Priya Jain', designation: 'PRT', qualification: 'M.Com, B.ED.,M.Lib' },
     { dept: 'PRT', sn: 5, name: 'Mrs. Nisha Kurmi', designation: 'PRT', qualification: 'M.A.,B.P.Ed,B.Ed' },
     { dept: 'PRT', sn: 6, name: 'Mrs. Pravina Shrivastava', designation: 'PRT', qualification: 'M.A, B.Ed' },
     { dept: 'PRT', sn: 7, name: 'Mrs. Shivani Chourasiya', designation: 'PRT', qualification: 'M.A.,B.Ed.' },

@@ -517,7 +517,7 @@ function StaffTeaching() {
     { dept: 'PRT', sn: 8, name: 'Mrs. Vandana Thakur', designation: 'PRT', qualification: 'B.Com.,B.Ed, PGDCA' },
     { dept: 'PRT', sn: 9, name: 'Ms. Gargi Badkul', designation: 'PRT', qualification: 'M.B.A, B.Ed' },
     { dept: 'PRT', sn: 10, name: 'Mrs. Rashmi Soni', designation: 'PRT', qualification: 'M.A ,B.Ed' },
-    { dept: 'PRT', sn: 11, name: 'Ms. Ayushi Soni', designation: 'PRT', qualification: 'M.Sc ,B.Ed' },
+    { dept: 'PRT', sn: 11, name: 'Ms. Ayushi Soni', designation: 'PRT', qualification: 'M.Sc.,B.Ed'  },
     { dept: 'PRT', sn: 12, name: 'Ms. Caroline Grace Santlal', designation: 'PRT', qualification: 'M.Com,B.Ed' },
     { dept: 'PRT', sn: 13, name: 'Mrs. Rachna Ephraim Samuel', designation: 'PRT', qualification: 'M.A,B.Ed' },
     { dept: 'PRT', sn: 14, name: 'Ms. Shashi', designation: 'PRT (Dance)', qualification: 'B.P.A' },
